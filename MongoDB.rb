@@ -1,4 +1,4 @@
-require_relative 'backup'
+require_relative 'Backup'
 
 module Backup
 
@@ -20,7 +20,7 @@ module Backup
     end
   end
 
-  class MongoDBTest < MongoDB
+  class MongodbTest < MongoDB
     def execute
       super() do |dir|
         puts "#{dir} $> #{self.cmd}"
