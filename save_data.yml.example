@@ -1,0 +1,7 @@
+mongodb:
+    - name: task
+      domain: ds013250.mlab.com
+      port: 13250
+      database: heroku_xxx
+      user: heroku_xxx
+      password: toto
