@@ -2,7 +2,8 @@
 require 'colorize'
 require 'yaml'
 require_relative 'Arguments'
-require_relative 'MongoDB'
+require_relative 'Backup'
+require_relative 'Backup/MongoDB'
 
 begin
   opts = Arguments.instance.parse

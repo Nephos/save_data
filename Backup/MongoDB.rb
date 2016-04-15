@@ -1,5 +1,3 @@
-require_relative 'Backup'
-
 module Backup
 
   class MongoDB < Interface
