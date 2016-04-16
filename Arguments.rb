@@ -16,7 +16,7 @@ class Arguments
       end
 
       $backup_dir_path = ENV["SAVE_DATA_BACKUP_DIR_PATH"] || "/tmp"
-      opt.on("--backup-dir-path", "Path to the backup directory. Default to /tmp") do |path|
+      opt.on("--backup-dir-path=/tmp", "Path to the backup directory. Default to /tmp") do |path|
         $backup_dir_path = File.absolute_path(path)
       end
     end.parse!

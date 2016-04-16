@@ -24,5 +24,6 @@ begin
   end
 rescue => err
   puts err.message.to_s.red
+  puts err.backtrace.join("\n").red if ENV['DEBUG'] == 'true'
   exit 1
 end
