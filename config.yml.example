@@ -1,4 +1,4 @@
-MongoDB:
+Mongodb:
   - name: task
     domain: ds013250.mlab.com
     port: 13250

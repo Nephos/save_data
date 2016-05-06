@@ -1,6 +1,8 @@
+require_relative 'core'
+
 module Backup
 
-  class MongoDB < Interface
+  class Mongodb < Core
     def initialize(backup_dir: '/tmp/', name: nil, domain: nil, port: nil, database: nil, user: nil, password: nil)
       @backup_dir = backup_dir
       super(name: name, domain: domain, port: port, database: database, user: user, password: password)
@@ -18,7 +20,7 @@ module Backup
     end
   end
 
-  class MongodbTest < MongoDB
+  class MongodbTest < Mongodb
     def execute
       super() do |dir|
         puts "#{dir} $> #{self.cmd}"

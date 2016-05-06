@@ -1,8 +1,7 @@
-#!/usr/bin/env ruby
 require 'tmpdir'
 
 module Backup
-  class Interface
+  class Core
     attr_accessor :name, :domain, :port, :database, :user, :password
     attr_reader :cmd, :time
     def initialize(name: nil, domain: nil, port: nil, database: nil, user: nil, password: nil)

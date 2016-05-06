@@ -1,9 +1,9 @@
 #!/usr/bin/env ruby
 require 'colorize'
 require 'yaml'
-require_relative 'Arguments'
-require_relative 'Backup'
-require_relative 'Backup/MongoDB'
+require_relative 'arguments'
+require_relative 'backup/core'
+require_relative 'backup/mongodb'
 
 begin
   opts = Arguments.instance.parse
