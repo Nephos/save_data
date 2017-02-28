@@ -30,10 +30,10 @@ class Backup::Core
         Dir.mkdir @name
         Dir.chdir @name
         block_given? ? yield(dir) : puts(`#{self.cmd}`) # to be used in "super() do { ... }"
-        Dir.chdir ".."
+        Dir.chdir dir
         tar_file = "#{dir}.tar.gz"
         puts `tar -acf #{tar_file} #{@name}`
-        `mkdir -p #{@output_dir} && mv #{tar_file} #{@output_dir}`
+        puts `mkdir -p #{@output_dir} && mv -v #{tar_file} #{@output_dir}`
       end
     rescue => err
       STDERR.puts "Error: #{err}".red

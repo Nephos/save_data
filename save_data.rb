@@ -6,6 +6,7 @@ require_relative 'backup/core'
 require_relative 'backup/mongodb'
 require_relative 'backup/ssh'
 require_relative 'backup/git'
+require_relative 'backup/postgresql'
 
 begin
   opts = Arguments.instance.parse
