@@ -4,6 +4,8 @@ require 'yaml'
 require_relative 'arguments'
 require_relative 'backup/core'
 require_relative 'backup/mongodb'
+require_relative 'backup/ssh'
+require_relative 'backup/git'
 
 begin
   opts = Arguments.instance.parse
@@ -13,7 +15,7 @@ begin
   config.each do |list_name, list|
     list.each do |data|
       puts "Save #{list_name} `#{data['name']}`".yellow
-      b = Backup.const_get(list_name).new(backup_dir: backup_dir, name: data['name'], domain: data['domain'], port: data['port'], database: data['database'], user: data['user'], password: data['password'])
+      b = Backup.const_get(list_name).new(data["name"], backup_dir, data)
       begin
         execute = b.execute
         puts (execute ? "Done `#{execute}`".green : "Error `#{execute}`".red)
@@ -23,7 +25,10 @@ begin
     end
   end
 rescue => err
-  puts err.message.to_s.red
-  puts err.backtrace.join("\n").red if ENV['DEBUG'] == 'true'
-  exit 1
+  if ENV['DEBUG'] == 'true'
+    raise err
+  else
+    puts err.message.to_s.red
+    exit 1
+  end
 end

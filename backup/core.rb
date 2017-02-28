@@ -1,38 +1,48 @@
 require 'tmpdir'
 
 module Backup
-  class Core
-    attr_accessor :name, :domain, :port, :database, :user, :password
-    attr_reader :cmd, :time
-    def initialize(name: nil, domain: nil, port: nil, database: nil, user: nil, password: nil)
-      # TODO: no nil value
-      @name = name || database
-      @domain = domain
-      @port = port
-      @database = database
-      @user = user
-      @password = password
-      @time = Time.now.to_i
-      @cmd = regen_cmd(name)
-    end
+end
 
-    def regen_cmd(save_name = nil)
-      raise "Not Implementd for #{self.class}"
-    end
+class Backup::Core
+  attr_reader :cmd, :params, :name, :output_dir, :time
 
-    def execute
-      current_dir = Dir.pwd
-      begin
-        Dir.mktmpdir('save_data_') do |dir|
-          Dir.chdir dir
-          block_given? ? yield(dir) : `#{self.cmd}`
-        end
-      rescue
-        return nil
-      ensure
-        Dir.chdir(current_dir)
-      end
-      self.cmd
-    end
+  def initialize(name, output_dir, params)
+    @name = name
+    @output_dir = output_dir
+    @params = params
+    @cmd = params["cmd"] || regen_cmd(name)
+    @time = Time.now.to_i
   end
+
+  # Must be implemented to generate a correct cmd
+  def regen_cmd(save_name = nil)
+    raise "Not Implementd for #{self.class}"
+  end
+
+  # Go into a temporary directory to download data
+  # Then execute the commands
+  # Then archive the content
+  def execute
+    current_dir = Dir.pwd
+    begin
+      Dir.mktmpdir("#{@name}.backup.") do |dir|
+        Dir.chdir dir
+        Dir.mkdir @name
+        Dir.chdir @name
+        block_given? ? yield(dir) : puts(`#{self.cmd}`) # to be used in "super() do { ... }"
+        Dir.chdir ".."
+        tar_file = "#{dir}.tar.gz"
+        puts `tar -acf #{tar_file} #{@name}`
+        `mkdir -p #{@output_dir} && mv #{tar_file} #{@output_dir}`
+      end
+    rescue => err
+      STDERR.puts "Error: #{err}".red
+      return nil
+    ensure
+      Dir.chdir(current_dir)
+    end
+
+    self.cmd
+  end
+
 end
