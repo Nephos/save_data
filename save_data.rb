@@ -13,18 +13,35 @@ begin
   config = YAML.load_file($config_path)
   backup_dir = $backup_dir_path
 
-  config.each do |list_name, list|
-    list.each do |data|
-      puts "Save #{list_name} `#{data['name']}`".yellow
-      b = Backup.const_get(list_name).new(data["name"], backup_dir, data)
+  failures = []
+
+  # Execute each backup
+  config.each do |list_name, backup_list|
+    backup_list.each do |backup_config|
+      puts "Save #{list_name} `#{backup_config['name']}`".yellow
+      current_backup = Backup.const_get(list_name).new(backup_config["name"], backup_dir, backup_config)
       begin
-        execute = b.execute
+        execute = current_backup.execute
         puts (execute ? "Done `#{execute}`".green : "Error `#{execute}`".red)
-      rescue => e
-        puts e.message.to_s.red
+      rescue => err
+        puts err.message.to_s.red
+        failures << err.message
       end
     end
   end
+
+  # Send a local mail
+  if $mail
+    total_saves = config.reduce(0) { |l, list| l + list.reduce(0) { |l, data| l + data.size } }
+    mail = "Subject: " + if failures.empty?
+      "Backup OK #{Date.today}"
+    else
+      "Backup FAILED #{Date.today} (#{failures.size}/#{total_saves})\n\n#{failures.join("\n\n")}"
+    end
+    mail.gsub!('"', '\"')
+    puts `echo -n "#{mail}" | sendmail #{ENV["USER"]}`
+  end
+
 rescue => err
   if ENV['DEBUG'] == 'true'
     raise err

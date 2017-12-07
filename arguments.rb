@@ -19,6 +19,11 @@ class Arguments
       opt.on("--backup-dir-path=/tmp", "Path to the backup directory. Default to /tmp") do |path|
         $backup_dir_path = File.absolute_path(path)
       end
+
+      $mail = ENV["SAVE_DATA_MAIL"] == "true"
+      opt.on("--mail", "Enable sending email to $USER") do
+        $mail = true
+      end
     end.parse!
   end
 
