@@ -3,14 +3,17 @@
 require 'optparse'
 require 'singleton'
 
-class Arguments
+# ```
+# SaveData::Arguments.instance.parse
+# ```
+class SaveData::Arguments
   include Singleton
 
   def parse
     OptionParser.new do |opt|
       opt.banner = "Usage: save_data <options>"
 
-      $config_path = ENV["SAVE_DATA_CONFIG_PATH"] || File.expand_path("config.yml", File.dirname(File.absolute_path(__FILE__)))
+      $config_path = ENV["SAVE_DATA_CONFIG_PATH"] || File.expand_path("config.yml", Dir.pwd)
       opt.on("--config-file=config.yml", "Configuration file to load. Default to ./config.yml") do |path|
         $config_path = File.absolute_path(path)
       end
